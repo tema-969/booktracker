@@ -1,6 +1,5 @@
-# utils.py
 import re
-
+from datetime import datetime
 
 def validate_isbn(isbn: str) -> bool:
     """
@@ -31,15 +30,21 @@ def validate_isbn(isbn: str) -> bool:
 
 def validate_date(date_str: str) -> bool:
     """
-    Проверяет, что строка имеет формат YYYY-MM-DD.
-
-    Примеры:
-        validate_date("2025-12-25") → True
-        validate_date("25-12-2025") → False
+    Проверяет, что строка имеет формат YYYY-MM-DD и представляет собой корректную дату.
     """
     if not date_str or not date_str.strip():
         return True  # дата может быть не указана
-    return bool(re.fullmatch(r'^\d{4}-\d{2}-\d{2}$', date_str.strip()))
+
+    # Сначала проверяем формат через регулярное выражение
+    if not re.fullmatch(r'^\d{4}-\d{2}-\d{2}$', date_str.strip()):
+        return False
+
+    # Затем проверяем, что это реальная дата
+    try:
+        datetime.strptime(date_str.strip(), "%Y-%m-%d")
+        return True
+    except ValueError:
+        return False
 
 
 def validate_pages(pages_str: str) -> bool:
